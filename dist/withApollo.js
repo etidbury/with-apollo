@@ -4,18 +4,18 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const react_apollo_1 = require("react-apollo");
 const head_1 = require("next/head");
-const initApollo = require("./initApollo");
+const initApollo_1 = require("./initApollo");
 // Gets the display name of a JSX component for dev tools
 function getComponentDisplayName(Component) {
     return Component.displayName || Component.name || 'Unknown';
 }
-exports.default = (ComposedComponent) => {
+exports.withApollo = (ComposedComponent) => {
     var _a;
     return _a = class WithData extends React.Component {
             constructor(props) {
                 super(props);
                 //@ts-ignore
-                this.apollo = initApollo(this.props.serverState.apollo.data);
+                this.apollo = initApollo_1.initApollo(this.props.serverState.apollo.data);
             }
             static async getInitialProps(ctx) {
                 // Initial serverState with apollo (empty)
@@ -34,7 +34,7 @@ exports.default = (ComposedComponent) => {
                 //@ts-ignore
                 if (!process.browser) {
                     //@ts-ignore
-                    const apollo = initApollo();
+                    const apollo = initApollo_1.initApollo();
                     if (!apollo) {
                         throw new Error('Failed to instantiate Apollo (initApollo)');
                     }

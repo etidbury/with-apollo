@@ -3,14 +3,14 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import { ApolloProvider, getDataFromTree } from 'react-apollo'
 import Head from 'next/head'
-import * as initApollo from './initApollo'
+import {initApollo} from './initApollo'
 
 // Gets the display name of a JSX component for dev tools
 function getComponentDisplayName (Component) {
     return Component.displayName || Component.name || 'Unknown'
 }
 
-export default (ComposedComponent:any):any => {
+export const withApollo:any = (ComposedComponent:any):any => {
     return class WithData extends React.Component<any> {
     static displayName = `WithData(${getComponentDisplayName(
         ComposedComponent
