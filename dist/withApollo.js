@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { ApolloProvider, getDataFromTree } from 'react-apollo';
-import Head from 'next/head';
-import initApollo from './initApollo';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const PropTypes = require("prop-types");
+const react_apollo_1 = require("react-apollo");
+const head_1 = require("next/head");
+const initApollo_1 = require("./initApollo");
 // Gets the display name of a JSX component for dev tools
 function getComponentDisplayName(Component) {
     return Component.displayName || Component.name || 'Unknown';
 }
-export default ComposedComponent => {
+exports.default = ComposedComponent => {
     var _a;
-    return _a = class WithData extends Component {
+    return _a = class WithData extends React.Component {
             constructor(props) {
                 super(props);
                 //@ts-ignore
-                this.apollo = initApollo(this.props.serverState.apollo.data);
+                this.apollo = initApollo_1.default(this.props.serverState.apollo.data);
             }
             static async getInitialProps(ctx) {
                 // Initial serverState with apollo (empty)
@@ -31,12 +33,12 @@ export default ComposedComponent => {
                 // and extract the resulting data
                 //@ts-ignore
                 if (!process.browser) {
-                    const apollo = initApollo();
+                    const apollo = initApollo_1.default();
                     try {
                         // Run all GraphQL queries
-                        await getDataFromTree(
+                        await react_apollo_1.getDataFromTree(
                         //@ts-ignore
-                        React.createElement(ApolloProvider, { client: apollo },
+                        React.createElement(react_apollo_1.ApolloProvider, { client: apollo },
                             React.createElement(ComposedComponent, Object.assign({}, composedInitialProps))), {
                             router: {
                                 asPath: ctx.asPath,
@@ -52,7 +54,7 @@ export default ComposedComponent => {
                     }
                     // getDataFromTree does not call componentWillUnmount
                     // head side effect therefore need to be cleared manually
-                    Head.rewind();
+                    head_1.default.rewind();
                     // Extract query data from the Apollo store
                     serverState = {
                         apollo: {
@@ -69,7 +71,7 @@ export default ComposedComponent => {
             render() {
                 return (
                 //@ts-ignore
-                React.createElement(ApolloProvider, { client: this.apollo },
+                React.createElement(react_apollo_1.ApolloProvider, { client: this.apollo },
                     React.createElement(ComposedComponent, Object.assign({}, this.props))));
             }
         },

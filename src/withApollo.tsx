@@ -1,6 +1,6 @@
 
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
+import * as PropTypes from 'prop-types'
 import { ApolloProvider, getDataFromTree } from 'react-apollo'
 import Head from 'next/head'
 import initApollo from './initApollo'
@@ -11,7 +11,7 @@ function getComponentDisplayName (Component) {
 }
 
 export default ComposedComponent => {
-    return class WithData extends Component<any> {
+    return class WithData extends React.Component<any> {
     static displayName = `WithData(${getComponentDisplayName(
         ComposedComponent
     )})`

@@ -2,7 +2,7 @@
     "compilerOptions": {
         "outDir":"./dist",
         "target": "esnext",
-        "module": "esnext",
+        "module": "commonjs",
         "jsx": "react",
         "allowJs": true,
         "moduleResolution": "node",
