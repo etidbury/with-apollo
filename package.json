@@ -1,0 +1,59 @@
+{
+  "name": "@etidbury/with-apollo",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "src/index.tsx",
+  "files": [
+    "dist/**/*"
+  ],
+  "engines": {
+    "node": "10.x.x"
+  },
+  "scripts": {
+    "build": "npm run build:reset && NODE_ENV=production $(npm bin)/tsc",
+    "build:reset": "rm -rf dist",
+    "eslint": "$(npm bin)/eslint --max-warnings 300 ./",
+    "dev": "$(npm bin)/tsc --watch",
+    "start": "npm run dev",
+    "setup": "tidil setup --tpl ts-lib",
+    "test:ci": "npm run test --forceExit",
+    "test": "$(npm bin)/jest",
+    "test:watch": "$(npm bin)/jest --watchAll --runInBand"
+  },
+  "dependencies": {
+    "@etidbury/auth0": "^0.0.1",
+    "@etidbury/ts-lib-helpers": "^0.0.1",
+    "apollo-cache-inmemory": "^1.3.10",
+    "apollo-client": "^2.4.6",
+    "apollo-link": "^1.2.3",
+    "apollo-link-context": "^1.0.9",
+    "apollo-link-http": "^1.5.5",
+    "apollo-link-ws": "^1.0.9",
+    "graphql": "^14.0.2",
+    "isomorphic-unfetch": "^3.0.0",
+    "next": "^7.0.2",
+    "prop-types": "^15.6.2",
+    "react": "^16.6.3",
+    "react-apollo": "^2.3.1",
+    "react-dom": "^16.6.3",
+    "subscriptions-transport-ws": "^0.9.15",
+    "url-join": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/jest": "^23.3.9",
+    "@types/node": "^10.12.9",
+    "@types/react": "^16.7.6",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "chai": "^4.2.0",
+    "eslint": "5.3.0",
+    "eslint-plugin-promise": "3.8.0",
+    "eslint-plugin-typescript": "^0.13.0",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.4",
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.1.6"
+  }
+}

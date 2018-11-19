@@ -1,0 +1,116 @@
+## More info on this config please check out ts-lib-helpers docs here:
+## @link https://github.com/etidbury/ts-lib-helpers/blob/master/docs/circleci.md
+
+version: 2
+jobs:
+  build:
+    # environment:
+    #   DEBUG: 'true'
+    docker:
+      #- image: circleci/node:10-browsers
+      - image: circleci/node:10
+      #- image: docker:17.05.0-ce-git
+    steps:
+      - run:
+          name: Check GITHUB_TOKEN is set
+          command: |
+              if [ -z "$GITHUB_TOKEN" ]; then
+                echo "GITHUB_TOKEN needs to be defined in project" && exit 1
+              fi
+              
+      - checkout
+
+      ## Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          ## fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: sudo yarn global add now
+      - run: sudo yarn global add tidil
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run:
+          name: Yarn install
+          command: |
+              yarn
+      - run:
+          name: Working directory info
+          command: |
+              ls -la
+              pwd
+      - run:
+          name: Set Git Credentials
+          command: |
+              git config --global user.email "bot@circleci.com"
+              git config --global user.name "CircleCI"
+
+      # - run:
+      #     name: Initialise DB
+      #     command: |
+      #         yarn db:migrate
+      #         yarn db:seed     
+
+
+
+      ## More info on this config please check out ts-lib-helpers docs here:
+      ## @link https://github.com/etidbury/ts-lib-helpers/blob/master/docs/circleci.md
+      - run:
+          name: Deployment
+          command: |
+
+            if [ "${CIRCLE_BRANCH}" == "staging" ]; then
+                ## > For listening pushes to 'staging' (no testing)
+                
+                echo "Setting up staging environment..."
+
+                #export NOW_ALIAS='jwtauth-api-staging.now.sh'
+              
+            elif [ "${CIRCLE_BRANCH}" == "production" ]; then
+                ## > For listening pushes to 'production' (no testing)
+
+                echo "Setting up production environment..."
+
+                #export NOW_ALIAS='jwtauth-api-production.now.sh'
+                #export NOW_SCALE='2'
+
+            elif [ "${CIRCLE_BRANCH}" == "development" ]; then
+                ## > For listening pushes to 'development' (no testing)
+                ## IMPORTANT!
+                ## make sure you add 'development' to workflow.build.filters below 
+                ## to start listening for branch changes...
+
+                echo "Setting up development environment..."
+
+                #export NOW_ALIAS='jwtauth-api-dev.now.sh'
+                #export NOW_SCALE='1'
+
+            else
+                ## > For listening to misc. branches ('edd', 'eddie' etc.) 
+                ## (initially runs tests and merges to 'development' branch upon finish)
+
+                ## add zeit now deployment
+                #export NOW_ALIAS='jwtauth-api-dev.now.sh'
+                #export NOW_SCALE='1'
+            fi
+
+            ## Note: this script also has if [ branch == 'staging']...
+            bash ./node_modules/ts-lib-helpers/util/circleci/default.sh
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - edd
+                - eddie
+                #- development
+                - staging
+                - production

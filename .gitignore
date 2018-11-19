@@ -1,0 +1,28 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+
+# testing
+/coverage
+
+
+
+# misc
+.DS_Store
+.env*
+!.env.example
+
+*.log
+._*
+.idea
+
+*.log
+.env
+
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
+
+# Ignore builds?
+# .build*
