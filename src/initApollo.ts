@@ -126,7 +126,7 @@ const create = (initialState) =>{
 }
 
 
-export default function initApollo (initialState?) {
+export const initApollo:any= (initialState?):any => {
     // Make sure to create a new client for every server-side request so that data
     // isn't shared between connections (which would be bad)
     //@ts-ignore
@@ -142,3 +142,4 @@ export default function initApollo (initialState?) {
 
     return apolloClient
 }
+export default initApollo

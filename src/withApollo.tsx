@@ -3,14 +3,14 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import { ApolloProvider, getDataFromTree } from 'react-apollo'
 import Head from 'next/head'
-import initApollo from './initApollo'
+import * as initApollo from './initApollo'
 
 // Gets the display name of a JSX component for dev tools
 function getComponentDisplayName (Component) {
     return Component.displayName || Component.name || 'Unknown'
 }
 
-export default ComposedComponent => {
+export default (ComposedComponent:any):any => {
     return class WithData extends React.Component<any> {
     static displayName = `WithData(${getComponentDisplayName(
         ComposedComponent
@@ -37,7 +37,12 @@ export default ComposedComponent => {
         // and extract the resulting data
         //@ts-ignore
         if (!process.browser) {
+            //@ts-ignore
             const apollo = initApollo()
+
+            if (!apollo) {
+                throw new Error('Failed to instantiate Apollo (initApollo)')
+            }
 
             try {
                 // Run all GraphQL queries

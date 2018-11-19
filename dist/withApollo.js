@@ -4,18 +4,18 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const react_apollo_1 = require("react-apollo");
 const head_1 = require("next/head");
-const initApollo_1 = require("./initApollo");
+const initApollo = require("./initApollo");
 // Gets the display name of a JSX component for dev tools
 function getComponentDisplayName(Component) {
     return Component.displayName || Component.name || 'Unknown';
 }
-exports.default = ComposedComponent => {
+exports.default = (ComposedComponent) => {
     var _a;
     return _a = class WithData extends React.Component {
             constructor(props) {
                 super(props);
                 //@ts-ignore
-                this.apollo = initApollo_1.default(this.props.serverState.apollo.data);
+                this.apollo = initApollo(this.props.serverState.apollo.data);
             }
             static async getInitialProps(ctx) {
                 // Initial serverState with apollo (empty)
@@ -33,7 +33,11 @@ exports.default = ComposedComponent => {
                 // and extract the resulting data
                 //@ts-ignore
                 if (!process.browser) {
-                    const apollo = initApollo_1.default();
+                    //@ts-ignore
+                    const apollo = initApollo();
+                    if (!apollo) {
+                        throw new Error('Failed to instantiate Apollo (initApollo)');
+                    }
                     try {
                         // Run all GraphQL queries
                         await react_apollo_1.getDataFromTree(

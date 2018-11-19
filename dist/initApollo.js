@@ -102,7 +102,7 @@ const create = (initialState) => {
         cache: new apollo_cache_inmemory_1.InMemoryCache().restore(initialState || {})
     });
 };
-function initApollo(initialState) {
+exports.initApollo = (initialState) => {
     // Make sure to create a new client for every server-side request so that data
     // isn't shared between connections (which would be bad)
     //@ts-ignore
@@ -115,6 +115,6 @@ function initApollo(initialState) {
         apolloClient = create(initialState);
     }
     return apolloClient;
-}
-exports.default = initApollo;
+};
+exports.default = exports.initApollo;
 //# sourceMappingURL=initApollo.js.map
