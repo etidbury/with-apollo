@@ -1,7 +1,6 @@
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./withApollo"));
+const withApollo_1 = require("./withApollo");
+exports.withApollo = withApollo_1.withApollo;
+exports.default = withApollo_1.withApollo;
 //# sourceMappingURL=index.js.map

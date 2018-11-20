@@ -1,9 +1,10 @@
 {
   "name": "@etidbury/with-apollo",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "",
   "main": "dist/index.js",
   "module": "src/index.tsx",
+  "types": "./types/index.d.ts",
   "files": [
     "dist/**/*"
   ],

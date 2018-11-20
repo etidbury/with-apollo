@@ -1,1 +1,0 @@
-export function withApollo(c:any):any;
