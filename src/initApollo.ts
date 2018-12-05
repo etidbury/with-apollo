@@ -8,7 +8,10 @@ import { setContext } from 'apollo-link-context'
 import { getAccessToken } from '@etidbury/auth0'
 import { WebSocketLink } from 'apollo-link-ws'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
-import { ApolloLink } from 'apollo-link'
+// import { ApolloLink } from 'apollo-link'
+import { split } from 'apollo-link'
+import { getMainDefinition } from 'apollo-utilities'
+
 // import { API_BASE_URL,DEBUG } from './options'
 let apolloClient = null
 
@@ -42,12 +45,14 @@ const create = (initialState) =>{
         if (DEBUG) {
             console.debug('> Using websocket URI: ',wsLinkURI)
         }
+        
+        // const token = getAccessToken()
 
         const client = new SubscriptionClient(wsLinkURI, {
             reconnect: true,
-            connectionParams: {
-            // accessToken: 'jkasdhkjashd jkashdjk ashdas'
-            }
+            // connectionParams: {
+            //    accessToken: token
+            // }
         })
 
         wsLink = new WebSocketLink(client)
@@ -82,12 +87,11 @@ const create = (initialState) =>{
     // console.log('API_BASE_URL',API_BASE_URL)
 
     // console.log('uri',urljoin(API_BASE_URL,'graphql'))
-    
     const httpLink = new HttpLink({
         uri: urljoin(API_BASE_URL,'graphql') // Server URL (must be absolute)
         , credentials: 'same-origin' // Additional fetch() options like `credentials` or `headers`
     })
-
+    
     const authLink = setContext((_, { headers }) => {
         // get the authentication token from local storage if it exists
         const token = getAccessToken()
@@ -100,19 +104,22 @@ const create = (initialState) =>{
         }
     })
 
-    // const link = split(
-    //     ({ query }) => {
-    //         const { kind, operation } = getMainDefinition(query)
-    //         return kind === 'OperationDefinition' && operation === 'subscription'
-    //     },
-    //     process.browser ? wsLink : false,
-    //     httpLinkWithAuth,
-    // )
+    const httpLinkWithAuth = authLink.concat(httpLink)
 
-    const links = [authLink, httpLink]
+    let link = httpLinkWithAuth
+
+    // const links = [authLink.concat(httpLink)]
 
     if (wsLink)
-        links.push(wsLink)
+        link = split(
+            ({ query }) => {
+                const { kind, operation } = getMainDefinition(query)
+                return kind === 'OperationDefinition' && operation === 'subscription'
+            },
+            wsLink,
+            httpLinkWithAuth
+        )
+
 
     // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
     return new ApolloClient({
@@ -120,7 +127,7 @@ const create = (initialState) =>{
         connectToDevTools: process.browser,
         //@ts-ignore
         ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
-        link: ApolloLink.from(links),
+        link,
         cache: new InMemoryCache().restore(initialState || {})
     })
 }

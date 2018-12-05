@@ -707,13 +707,17 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@etidbury/auth0@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@etidbury/auth0/-/auth0-0.0.1.tgz#425c4d9eb66dce95f12ec44b94b02448e0c8eaf1"
-  integrity sha512-QOggcAnMInveKUncTMiT7FVnSR4NRZRtmRutj5MIEFVnThAi/k0MploC7brgOyHWaMy9sQhxbMu/mU5n9HqxAg==
+"@etidbury/auth0@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@etidbury/auth0/-/auth0-0.0.6.tgz#f82285d67db48036796bd95047411ebab11f09c1"
+  integrity sha512-0p3z005P4oNPa6G65qhak7IfjmYwJpYiN5uguZbrGrxKZSRflpFuZGacOiy6bzcaPnID3XTukRkHkYNuusiT6w==
   dependencies:
     "@etidbury/ts-lib-helpers" "^0.0.1"
     auth0-lock "^11.11.0"
+    component-cookie "^1.1.4"
+    cookie "^0.3.1"
+    js-cookie "^2.2.0"
+    react "^16.6.3"
     url-join "4.0.0"
 
 "@etidbury/ts-lib-helpers@^0.0.1":
@@ -2051,6 +2055,13 @@ commondir@^1.0.1:
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
   integrity sha1-3dgA2gxmEnOTzKWVDqloo6rxJTs=
 
+component-cookie@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/component-cookie/-/component-cookie-1.1.4.tgz#1b88b3dda4953d890163dd52fa53df374247cf8d"
+  integrity sha512-j6rzl+vHDTowvYz7Al3V0ud84O2l4YqGdA9qMj1W1nlZ5yWi7EhOd7ZSPzWFM25gZgv2OxWh6JlJYfsz2+XYow==
+  dependencies:
+    debug "2.2.0"
+
 component-emitter@^1.2.0, component-emitter@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
@@ -2109,6 +2120,11 @@ convert-source-map@^1.1.0, convert-source-map@^1.4.0, convert-source-map@^1.5.1:
   integrity sha512-eFu7XigvxdZ1ETfbgPBohgyQ/Z++C0eEhTor0qRwBw9unw+L0/6V8wkSuGgzdThkiS5lSpdptOQPD8Ak40a+7A==
   dependencies:
     safe-buffer "~5.1.1"
+
+cookie@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
+  integrity sha1-5+Ch+e9DtMi6klxcWpboBtFoc7s=
 
 cookiejar@^2.1.0:
   version "2.1.2"
@@ -2271,6 +2287,13 @@ date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
   integrity sha1-6vQ5/U1ISK105cx9vvIAZyueNFs=
+
+debug@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
+  integrity sha1-+HBX6ZWxofauaklgZkE3vFbwOdo=
+  dependencies:
+    ms "0.7.1"
 
 debug@2.6.9, debug@^2.1.2, debug@^2.1.3, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
@@ -4929,6 +4952,11 @@ move-concurrently@^1.0.1:
     mkdirp "^0.5.1"
     rimraf "^2.5.4"
     run-queue "^1.0.3"
+
+ms@0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
+  integrity sha1-nNE8A62/8ltl7/3nzoZO6VIBcJg=
 
 ms@2.0.0:
   version "2.0.0"

@@ -5,6 +5,7 @@ const PropTypes = require("prop-types");
 const react_apollo_1 = require("react-apollo");
 const head_1 = require("next/head");
 const initApollo_1 = require("./initApollo");
+const auth0_1 = require("@etidbury/auth0");
 // Gets the display name of a JSX component for dev tools
 function getComponentDisplayName(Component) {
     return Component.displayName || Component.name || 'Unknown';
@@ -68,6 +69,7 @@ exports.withApollo = (ComposedComponent) => {
                     };
                 }
                 return {
+                    isAuthenticated: auth0_1.checkIsAuthenticated(ctx),
                     serverState,
                     ...composedInitialProps
                 };
@@ -81,7 +83,8 @@ exports.withApollo = (ComposedComponent) => {
         },
         _a.displayName = `WithData(${getComponentDisplayName(ComposedComponent)})`,
         _a.propTypes = {
-            serverState: PropTypes.object.isRequired
+            serverState: PropTypes.object.isRequired,
+            isAuthenticated: PropTypes.bool
         },
         _a;
 };

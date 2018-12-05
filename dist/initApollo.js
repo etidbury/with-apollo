@@ -10,7 +10,9 @@ const apollo_link_context_1 = require("apollo-link-context");
 const auth0_1 = require("@etidbury/auth0");
 const apollo_link_ws_1 = require("apollo-link-ws");
 const subscriptions_transport_ws_1 = require("subscriptions-transport-ws");
+// import { ApolloLink } from 'apollo-link'
 const apollo_link_1 = require("apollo-link");
+const apollo_utilities_1 = require("apollo-utilities");
 // import { API_BASE_URL,DEBUG } from './options'
 let apolloClient = null;
 // Polyfill fetch() on the server (used by apollo-client)
@@ -33,11 +35,9 @@ const create = (initialState) => {
         if (DEBUG) {
             console.debug('> Using websocket URI: ', wsLinkURI);
         }
+        // const token = getAccessToken()
         const client = new subscriptions_transport_ws_1.SubscriptionClient(wsLinkURI, {
             reconnect: true,
-            connectionParams: {
-            // accessToken: 'jkasdhkjashd jkashdjk ashdas'
-            }
         });
         wsLink = new apollo_link_ws_1.WebSocketLink(client);
     }
@@ -81,24 +81,21 @@ const create = (initialState) => {
             }
         };
     });
-    // const link = split(
-    //     ({ query }) => {
-    //         const { kind, operation } = getMainDefinition(query)
-    //         return kind === 'OperationDefinition' && operation === 'subscription'
-    //     },
-    //     process.browser ? wsLink : false,
-    //     httpLinkWithAuth,
-    // )
-    const links = [authLink, httpLink];
+    const httpLinkWithAuth = authLink.concat(httpLink);
+    let link = httpLinkWithAuth;
+    // const links = [authLink.concat(httpLink)]
     if (wsLink)
-        links.push(wsLink);
+        link = apollo_link_1.split(({ query }) => {
+            const { kind, operation } = apollo_utilities_1.getMainDefinition(query);
+            return kind === 'OperationDefinition' && operation === 'subscription';
+        }, wsLink, httpLinkWithAuth);
     // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
     return new apollo_client_1.ApolloClient({
         //@ts-ignore
         connectToDevTools: process.browser,
         //@ts-ignore
         ssrMode: !process.browser,
-        link: apollo_link_1.ApolloLink.from(links),
+        link,
         cache: new apollo_cache_inmemory_1.InMemoryCache().restore(initialState || {})
     });
 };
