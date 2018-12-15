@@ -707,10 +707,10 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@etidbury/auth0@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@etidbury/auth0/-/auth0-0.0.6.tgz#f82285d67db48036796bd95047411ebab11f09c1"
-  integrity sha512-0p3z005P4oNPa6G65qhak7IfjmYwJpYiN5uguZbrGrxKZSRflpFuZGacOiy6bzcaPnID3XTukRkHkYNuusiT6w==
+"@etidbury/auth0@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@etidbury/auth0/-/auth0-0.0.7.tgz#0b62a5ce91f49935ee6ffcf52933c57462e9b807"
+  integrity sha512-pDa4K9AubI/Etr5Un21pPwhuBmnjwRXcRpiewMXVLVR7iQIh9yeTJyUOdwfGQFo5dVl6fK9bb+D/EZIRv2xIng==
   dependencies:
     "@etidbury/ts-lib-helpers" "^0.0.1"
     auth0-lock "^11.11.0"
