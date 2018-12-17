@@ -23,7 +23,7 @@ if (!process.browser) {
 }
 
 
-const { API_BASE_URL,DEBUG } = process.env
+const { API_BASE_URL,DEBUG,USE_SUBSCRIPTIONS } = process.env
 
 const create = (initialState) =>{
     
@@ -34,8 +34,8 @@ const create = (initialState) =>{
     let wsLink
     
     //@ts-ignore
-    if (process.browser) {
-
+    if (process.browser&&!!USE_SUBSCRIPTIONS) {
+        
         if (!API_BASE_URL||!API_BASE_URL.length){
             throw new TypeError('Environment variable API_BASE_URL not set')
         }
