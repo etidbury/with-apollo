@@ -5,7 +5,7 @@ const apollo_client_1 = require("apollo-client");
 const apollo_link_http_1 = require("apollo-link-http");
 const apollo_cache_inmemory_1 = require("apollo-cache-inmemory");
 const fetch = require("isomorphic-unfetch");
-const urljoin = require("url-join");
+// import * as urljoin from 'url-join'
 const apollo_link_context_1 = require("apollo-link-context");
 const auth0_1 = require("@etidbury/auth0");
 const apollo_link_ws_1 = require("apollo-link-ws");
@@ -66,7 +66,7 @@ const create = (initialState) => {
     // console.log('API_BASE_URL',API_BASE_URL)
     // console.log('uri',urljoin(API_BASE_URL,'graphql'))
     const httpLink = new apollo_link_http_1.HttpLink({
-        uri: urljoin(API_BASE_URL, 'graphql') // Server URL (must be absolute)
+        uri: API_BASE_URL // Server URL (must be absolute)
         ,
         credentials: 'same-origin' // Additional fetch() options like `credentials` or `headers`
     });

@@ -3,7 +3,7 @@ import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import * as fetch from 'isomorphic-unfetch'
-import * as urljoin from 'url-join'
+// import * as urljoin from 'url-join'
 import { setContext } from 'apollo-link-context'
 import { getAccessToken } from '@etidbury/auth0'
 import { WebSocketLink } from 'apollo-link-ws'
@@ -88,7 +88,7 @@ const create = (initialState) =>{
 
     // console.log('uri',urljoin(API_BASE_URL,'graphql'))
     const httpLink = new HttpLink({
-        uri: urljoin(API_BASE_URL,'graphql') // Server URL (must be absolute)
+        uri: API_BASE_URL // Server URL (must be absolute)
         , credentials: 'same-origin' // Additional fetch() options like `credentials` or `headers`
     })
     
