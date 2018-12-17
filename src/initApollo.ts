@@ -39,8 +39,8 @@ const create = (initialState) =>{
         if (!API_BASE_URL||!API_BASE_URL.length){
             throw new TypeError('Environment variable API_BASE_URL not set')
         }
-
-        const wsLinkURI = API_BASE_URL.replace(/https?/g, 'ws')
+        // todo: set logic to replace http with ws and https with wss. Currently replaces either with wss
+        const wsLinkURI = API_BASE_URL.replace(/https?/g, 'wss')
 
         if (DEBUG) {
             console.debug('> Using websocket URI: ',wsLinkURI)
