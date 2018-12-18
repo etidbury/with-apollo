@@ -21,17 +21,18 @@ if (!process.browser) {
     //@ts-ignore
     global.fetch = fetch;
 }
-const { API_BASE_URL, DEBUG } = process.env;
+const { API_BASE_URL, DEBUG, USE_SUBSCRIPTIONS } = process.env;
 const create = (initialState) => {
     // console.log('env',process.env)
     // const GRAPHQL_ENDPOINT = 'ws://localhost:3000/graphql';
     let wsLink;
     //@ts-ignore
-    if (process.browser) {
+    if (process.browser && !!USE_SUBSCRIPTIONS) {
         if (!API_BASE_URL || !API_BASE_URL.length) {
             throw new TypeError('Environment variable API_BASE_URL not set');
         }
-        const wsLinkURI = API_BASE_URL.replace(/https?/g, 'ws');
+        // todo: set logic to replace http with ws and https with wss. Currently replaces either with wss
+        const wsLinkURI = API_BASE_URL.replace(/https?/g, 'wss');
         if (DEBUG) {
             console.debug('> Using websocket URI: ', wsLinkURI);
         }

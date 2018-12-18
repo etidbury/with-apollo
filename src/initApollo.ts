@@ -32,7 +32,7 @@ const create = (initialState) =>{
     // const GRAPHQL_ENDPOINT = 'ws://localhost:3000/graphql';
 
     let wsLink
-    
+
     //@ts-ignore
     if (process.browser&&!!USE_SUBSCRIPTIONS) {
         
