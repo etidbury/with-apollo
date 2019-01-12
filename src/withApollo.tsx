@@ -82,9 +82,10 @@ export const withApollo:any = (ComposedComponent:any):any => {
             }
             
             return {
+                ...composedInitialProps,
                 isAuthenticated: checkIsAuthenticated(ctx),
                 serverState,
-                ...composedInitialProps
+                
             }
         }
 
