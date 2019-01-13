@@ -69,9 +69,9 @@ exports.withApollo = (ComposedComponent) => {
                     };
                 }
                 return {
+                    ...composedInitialProps,
                     isAuthenticated: auth0_1.checkIsAuthenticated(ctx),
                     serverState,
-                    ...composedInitialProps
                 };
             }
             render() {
