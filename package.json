@@ -1,6 +1,6 @@
 {
   "name": "@etidbury/with-apollo",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "",
   "main": "dist/index.js",
   "module": "src/index.tsx",
@@ -29,6 +29,7 @@
     "apollo-client": "^2.4.6",
     "apollo-link": "^1.2.3",
     "apollo-link-context": "^1.0.9",
+    "apollo-link-error": "^1.1.5",
     "apollo-link-http": "^1.5.5",
     "apollo-link-ws": "^1.0.9",
     "component-cookie": "^1.1.4",

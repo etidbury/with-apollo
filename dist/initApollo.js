@@ -13,6 +13,8 @@ const subscriptions_transport_ws_1 = require("subscriptions-transport-ws");
 // import { ApolloLink } from 'apollo-link'
 const apollo_link_1 = require("apollo-link");
 const apollo_utilities_1 = require("apollo-utilities");
+const apollo_link_error_1 = require("apollo-link-error");
+const apollo_link_2 = require("apollo-link");
 // import { API_BASE_URL,DEBUG } from './options'
 let apolloClient = null;
 // Polyfill fetch() on the server (used by apollo-client)
@@ -22,6 +24,21 @@ if (!process.browser) {
     global.fetch = fetch;
 }
 const { API_BASE_URL, DEBUG, USE_SUBSCRIPTIONS } = process.env;
+const extractHostname = (url) => {
+    var hostname;
+    //find & remove protocol (http, ftp, etc.) and get hostname
+    if (url.indexOf("//") > -1) {
+        hostname = url.split('/')[2];
+    }
+    else {
+        hostname = url.split('/')[0];
+    }
+    //find & remove port number
+    //hostname = hostname.split(':')[0];
+    //find & remove "?"
+    hostname = hostname.split('?')[0];
+    return hostname;
+};
 const create = (initialState) => {
     // console.log('env',process.env)
     // const GRAPHQL_ENDPOINT = 'ws://localhost:3000/graphql';
@@ -32,7 +49,14 @@ const create = (initialState) => {
             throw new TypeError('Environment variable API_BASE_URL not set');
         }
         // todo: set logic to replace http with ws and https with wss. Currently replaces either with wss
-        const wsLinkURI = API_BASE_URL.replace(/https?/g, 'wss');
+        let wsLinkURI;
+        const apiHostname = extractHostname(API_BASE_URL);
+        if (API_BASE_URL.indexOf('https://') > -1) {
+            wsLinkURI = 'wss://' + apiHostname;
+        }
+        else {
+            wsLinkURI = 'ws://' + apiHostname;
+        }
         if (DEBUG) {
             console.debug('> Using websocket URI: ', wsLinkURI);
         }
@@ -82,7 +106,17 @@ const create = (initialState) => {
             }
         };
     });
-    const httpLinkWithAuth = authLink.concat(httpLink);
+    const errorLink = apollo_link_error_1.onError(({ graphQLErrors, networkError }) => {
+        if (graphQLErrors)
+            graphQLErrors.map(({ message, locations, path, extensions }) => console.error(`[GraphQL error]: Message: ${message}, Path: ${path} Stack trace:`, extensions && extensions.exception && extensions.exception.stacktrace || '[N/A]'));
+        if (networkError)
+            console.error(`[Network error]:`, networkError);
+    });
+    const httpLinkWithAuth = apollo_link_2.ApolloLink.from([
+        errorLink,
+        authLink,
+        httpLink
+    ]);
     let link = httpLinkWithAuth;
     // const links = [authLink.concat(httpLink)]
     if (wsLink)

@@ -11,7 +11,8 @@ import { SubscriptionClient } from 'subscriptions-transport-ws'
 // import { ApolloLink } from 'apollo-link'
 import { split } from 'apollo-link'
 import { getMainDefinition } from 'apollo-utilities'
-
+import { onError } from "apollo-link-error"
+import { ApolloLink } from 'apollo-link';
 // import { API_BASE_URL,DEBUG } from './options'
 let apolloClient = null
 
@@ -24,6 +25,25 @@ if (!process.browser) {
 
 
 const { API_BASE_URL,DEBUG,USE_SUBSCRIPTIONS } = process.env
+
+const extractHostname=(url)=> {
+    var hostname;
+    //find & remove protocol (http, ftp, etc.) and get hostname
+
+    if (url.indexOf("//") > -1) {
+        hostname = url.split('/')[2];
+    }
+    else {
+        hostname = url.split('/')[0];
+    }
+
+    //find & remove port number
+    //hostname = hostname.split(':')[0];
+    //find & remove "?"
+    hostname = hostname.split('?')[0];
+
+    return hostname;
+}
 
 const create = (initialState) =>{
     
@@ -40,7 +60,15 @@ const create = (initialState) =>{
             throw new TypeError('Environment variable API_BASE_URL not set')
         }
         // todo: set logic to replace http with ws and https with wss. Currently replaces either with wss
-        const wsLinkURI = API_BASE_URL.replace(/https?/g, 'wss')
+        let wsLinkURI
+
+        const apiHostname = extractHostname(API_BASE_URL)
+
+        if (API_BASE_URL.indexOf('https://')>-1){
+            wsLinkURI = 'wss://'+apiHostname
+        }else{
+            wsLinkURI = 'ws://'+apiHostname
+        }
 
         if (DEBUG) {
             console.debug('> Using websocket URI: ',wsLinkURI)
@@ -104,9 +132,29 @@ const create = (initialState) =>{
         }
     })
 
-    const httpLinkWithAuth = authLink.concat(httpLink)
+    const errorLink = onError(({ graphQLErrors, networkError }) => {
+        if (graphQLErrors)
+            graphQLErrors.map(({ message, locations, path,extensions }) =>
+                console.error(
+                    `[GraphQL error]: Message: ${message}, Path: ${path} Stack trace:`
+                        , extensions && extensions.exception && extensions.exception.stacktrace || '[N/A]'
+                )
+            )
+
+        if (networkError) console.error(`[Network error]:`,networkError)
+    })
+
+
+    const httpLinkWithAuth = ApolloLink.from([
+        errorLink,
+        authLink,
+        httpLink
+    ])
+    
 
     let link = httpLinkWithAuth
+
+
 
     // const links = [authLink.concat(httpLink)]
 
