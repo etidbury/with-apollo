@@ -1,30 +1,41 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // Extracted from @link: https://github.com/zeit/next.js/tree/canary/examples/with-apollo-and-redux
-const apollo_client_1 = require("apollo-client");
-const apollo_link_http_1 = require("apollo-link-http");
-const apollo_cache_inmemory_1 = require("apollo-cache-inmemory");
-const fetch = require("isomorphic-unfetch");
+var apollo_client_1 = require("apollo-client");
+var apollo_link_http_1 = require("apollo-link-http");
+var apollo_cache_inmemory_1 = require("apollo-cache-inmemory");
+var fetch = require("isomorphic-unfetch");
 // import * as urljoin from 'url-join'
-const apollo_link_context_1 = require("apollo-link-context");
-const auth0_1 = require("@etidbury/auth0");
-const apollo_link_ws_1 = require("apollo-link-ws");
-const subscriptions_transport_ws_1 = require("subscriptions-transport-ws");
+var apollo_link_context_1 = require("apollo-link-context");
+var auth0_1 = require("@etidbury/auth0");
+var apollo_link_ws_1 = require("apollo-link-ws");
+var subscriptions_transport_ws_1 = require("subscriptions-transport-ws");
 // import { ApolloLink } from 'apollo-link'
-const apollo_link_1 = require("apollo-link");
-const apollo_utilities_1 = require("apollo-utilities");
-const apollo_link_error_1 = require("apollo-link-error");
-const apollo_link_2 = require("apollo-link");
+var apollo_link_1 = require("apollo-link");
+var apollo_utilities_1 = require("apollo-utilities");
+var apollo_link_error_1 = require("apollo-link-error");
+var apollo_link_2 = require("apollo-link");
 // import { API_BASE_URL,DEBUG } from './options'
-let apolloClient = null;
+var apolloClient = null;
 // Polyfill fetch() on the server (used by apollo-client)
 //@ts-ignore
 if (!process.browser) {
     //@ts-ignore
     global.fetch = fetch;
 }
-const { API_BASE_URL, DEBUG, USE_SUBSCRIPTIONS } = process.env;
-const extractHostname = (url) => {
+var _a = process.env, API_BASE_URL = _a.API_BASE_URL, DEBUG = _a.DEBUG, USE_SUBSCRIPTIONS = _a.USE_SUBSCRIPTIONS;
+var extractHostname = function (url) {
     var hostname;
     //find & remove protocol (http, ftp, etc.) and get hostname
     if (url.indexOf("//") > -1) {
@@ -39,18 +50,18 @@ const extractHostname = (url) => {
     hostname = hostname.split('?')[0];
     return hostname;
 };
-const create = (initialState) => {
+var create = function (initialState) {
     // console.log('env',process.env)
     // const GRAPHQL_ENDPOINT = 'ws://localhost:3000/graphql';
-    let wsLink;
+    var wsLink;
     //@ts-ignore
     if (process.browser && !!USE_SUBSCRIPTIONS) {
         if (!API_BASE_URL || !API_BASE_URL.length) {
             throw new TypeError('Environment variable API_BASE_URL not set');
         }
         // todo: set logic to replace http with ws and https with wss. Currently replaces either with wss
-        let wsLinkURI;
-        const apiHostname = extractHostname(API_BASE_URL);
+        var wsLinkURI = void 0;
+        var apiHostname = extractHostname(API_BASE_URL);
         if (API_BASE_URL.indexOf('https://') > -1) {
             wsLinkURI = 'wss://' + apiHostname;
         }
@@ -61,7 +72,7 @@ const create = (initialState) => {
             console.debug('> Using websocket URI: ', wsLinkURI);
         }
         // const token = getAccessToken()
-        const client = new subscriptions_transport_ws_1.SubscriptionClient(wsLinkURI, {
+        var client = new subscriptions_transport_ws_1.SubscriptionClient(wsLinkURI, {
             reconnect: true,
         });
         wsLink = new apollo_link_ws_1.WebSocketLink(client);
@@ -90,38 +101,41 @@ const create = (initialState) => {
     // )
     // console.log('API_BASE_URL',API_BASE_URL)
     // console.log('uri',urljoin(API_BASE_URL,'graphql'))
-    const httpLink = new apollo_link_http_1.HttpLink({
+    var httpLink = new apollo_link_http_1.HttpLink({
         uri: API_BASE_URL // Server URL (must be absolute)
         ,
         credentials: 'same-origin' // Additional fetch() options like `credentials` or `headers`
     });
-    const authLink = apollo_link_context_1.setContext((_, { headers }) => {
+    var authLink = apollo_link_context_1.setContext(function (_, _a) {
+        var headers = _a.headers;
         // get the authentication token from local storage if it exists
-        const token = auth0_1.getAccessToken();
+        var token = auth0_1.getAccessToken();
         // return the headers to the context so httpLink can read them
         return {
-            headers: {
-                ...headers,
-                Authorization: token ? `Bearer ${token}` : ''
-            }
+            headers: __assign({}, headers, { Authorization: token ? "Bearer " + token : '' })
         };
     });
-    const errorLink = apollo_link_error_1.onError(({ graphQLErrors, networkError }) => {
+    var errorLink = apollo_link_error_1.onError(function (_a) {
+        var graphQLErrors = _a.graphQLErrors, networkError = _a.networkError;
         if (graphQLErrors)
-            graphQLErrors.map(({ message, locations, path, extensions }) => console.error(`[GraphQL error]: Message: ${message}, Path: ${path} Stack trace:`, extensions && extensions.exception && extensions.exception.stacktrace || '[N/A]'));
+            graphQLErrors.map(function (_a) {
+                var message = _a.message, locations = _a.locations, path = _a.path, extensions = _a.extensions;
+                return console.error("[GraphQL error]: Message: " + message + ", Path: " + path + " Stack trace:", extensions && extensions.exception && extensions.exception.stacktrace || '[N/A]');
+            });
         if (networkError)
-            console.error(`[Network error]:`, networkError);
+            console.error("[Network error]:", networkError);
     });
-    const httpLinkWithAuth = apollo_link_2.ApolloLink.from([
+    var httpLinkWithAuth = apollo_link_2.ApolloLink.from([
         errorLink,
         authLink,
         httpLink
     ]);
-    let link = httpLinkWithAuth;
+    var link = httpLinkWithAuth;
     // const links = [authLink.concat(httpLink)]
     if (wsLink)
-        link = apollo_link_1.split(({ query }) => {
-            const { kind, operation } = apollo_utilities_1.getMainDefinition(query);
+        link = apollo_link_1.split(function (_a) {
+            var query = _a.query;
+            var _b = apollo_utilities_1.getMainDefinition(query), kind = _b.kind, operation = _b.operation;
             return kind === 'OperationDefinition' && operation === 'subscription';
         }, wsLink, httpLinkWithAuth);
     // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
@@ -130,11 +144,11 @@ const create = (initialState) => {
         connectToDevTools: process.browser,
         //@ts-ignore
         ssrMode: !process.browser,
-        link,
+        link: link,
         cache: new apollo_cache_inmemory_1.InMemoryCache().restore(initialState || {})
     });
 };
-exports.initApollo = (initialState) => {
+exports.initApollo = function (initialState) {
     // Make sure to create a new client for every server-side request so that data
     // isn't shared between connections (which would be bad)
     //@ts-ignore
