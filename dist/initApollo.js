@@ -141,6 +141,8 @@ var create = function (initialState) {
     // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
     return new apollo_client_1.ApolloClient({
         //@ts-ignore
+        storage: process.browser && window.localStorage,
+        //@ts-ignore
         connectToDevTools: process.browser,
         //@ts-ignore
         ssrMode: !process.browser,
