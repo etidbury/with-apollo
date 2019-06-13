@@ -178,7 +178,11 @@ const create = (initialState) =>{
         //@ts-ignore
         ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
         link,
-        cache: new InMemoryCache().restore(initialState || {})
+        cache: new InMemoryCache({
+
+            //@ts-ignore
+            dataIdFromObject: o => {o.id ? `${o.__typename}-${o.id}`: `${o.__typename}-${o.cursor}`},
+        }).restore(initialState || {})
     })
 }
 

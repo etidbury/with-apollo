@@ -147,7 +147,10 @@ var create = function (initialState) {
         //@ts-ignore
         ssrMode: !process.browser,
         link: link,
-        cache: new apollo_cache_inmemory_1.InMemoryCache().restore(initialState || {})
+        cache: new apollo_cache_inmemory_1.InMemoryCache({
+            //@ts-ignore
+            dataIdFromObject: function (o) { o.id ? o.__typename + "-" + o.id : o.__typename + "-" + o.cursor; },
+        }).restore(initialState || {})
     });
 };
 exports.initApollo = function (initialState) {
