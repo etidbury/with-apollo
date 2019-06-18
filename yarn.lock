@@ -715,10 +715,10 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@etidbury/auth0@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@etidbury/auth0/-/auth0-0.1.0.tgz#4f42e755a81c0ab169e145d07790c52b09c0ce56"
-  integrity sha512-a4kzKLO7fIyOmAyJq0VUjjAChG0kihhIpgfWfOZ8fVAtVWSeN55I4WDVUkpKV3Ry3AT639GYT86nCCVEICkElA==
+"@etidbury/auth0@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@etidbury/auth0/-/auth0-0.2.1.tgz#22752ed7c469f948642364e676f49f98302fa66e"
+  integrity sha512-GFwDZx+Acd30niiUHLxiqqbUstYlEYqWHPBaXDYkTtC9OPXGoDx5T7KVT2KloaQjZcAzgv/E4NSzhNBvVPkKkA==
   dependencies:
     "@etidbury/ts-lib-helpers" "^0.0.1"
     apollo-errors "^1.9.0"
