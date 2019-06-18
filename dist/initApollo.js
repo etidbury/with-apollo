@@ -54,11 +54,11 @@ var create = function (initialState) {
     // console.log('env',process.env)
     // const GRAPHQL_ENDPOINT = 'ws://localhost:3000/graphql';
     var wsLink;
+    if (!API_BASE_URL || !API_BASE_URL.length) {
+        throw new TypeError('Environment variable API_BASE_URL not set');
+    }
     //@ts-ignore
     if (process.browser && !!USE_SUBSCRIPTIONS) {
-        if (!API_BASE_URL || !API_BASE_URL.length) {
-            throw new TypeError('Environment variable API_BASE_URL not set');
-        }
         // todo: set logic to replace http with ws and https with wss. Currently replaces either with wss
         var wsLinkURI = void 0;
         var apiHostname = extractHostname(API_BASE_URL);
