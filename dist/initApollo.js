@@ -26,6 +26,7 @@ var apollo_link_1 = require("apollo-link");
 var apollo_utilities_1 = require("apollo-utilities");
 var apollo_link_error_1 = require("apollo-link-error");
 var apollo_link_2 = require("apollo-link");
+var apollo_cache_persist_1 = require("apollo-cache-persist");
 // import { API_BASE_URL,DEBUG } from './options'
 var apolloClient = null;
 // Polyfill fetch() on the server (used by apollo-client)
@@ -34,7 +35,10 @@ if (!process.browser) {
     //@ts-ignore
     global.fetch = fetch;
 }
-var _a = process.env, API_BASE_URL = _a.API_BASE_URL, DEBUG = _a.DEBUG, USE_SUBSCRIPTIONS = _a.USE_SUBSCRIPTIONS;
+var DEBUG = !!process.env.DEBUG;
+var USE_SUBSCRIPTIONS = process.env.USE_SUBSCRIPTIONS;
+//remove quotation marks added by zeit build
+var API_BASE_URL = process.env.API_BASE_URL.replace(/\"/g, '');
 var extractHostname = function (url) {
     var hostname;
     //find & remove protocol (http, ftp, etc.) and get hostname
@@ -132,12 +136,32 @@ var create = function (initialState) {
     ]);
     var link = httpLinkWithAuth;
     // const links = [authLink.concat(httpLink)]
-    if (wsLink)
+    if (wsLink) {
         link = apollo_link_1.split(function (_a) {
             var query = _a.query;
             var _b = apollo_utilities_1.getMainDefinition(query), kind = _b.kind, operation = _b.operation;
             return kind === 'OperationDefinition' && operation === 'subscription';
         }, wsLink, httpLinkWithAuth);
+    }
+    var restoreState = initialState || {};
+    var cache = new apollo_cache_inmemory_1.InMemoryCache({
+        //@ts-ignore
+        dataIdFromObject: function (o) { o.id ? o.__typename + "-" + o.id : o.__typename + "-" + o.cursor; },
+    }).restore(restoreState);
+    try {
+        //@ts-ignore
+        if (process.browser && typeof window !== "window") {
+            // See above for additional options, including other storage providers.
+            apollo_cache_persist_1.persistCache({
+                cache: cache,
+                //@ts-ignore
+                storage: window.localStorage,
+            });
+        }
+    }
+    catch (error) {
+        console.error('Error restoring Apollo cache', error);
+    }
     // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
     return new apollo_client_1.ApolloClient({
         //@ts-ignore
@@ -147,10 +171,7 @@ var create = function (initialState) {
         //@ts-ignore
         ssrMode: !process.browser,
         link: link,
-        cache: new apollo_cache_inmemory_1.InMemoryCache({
-            //@ts-ignore
-            dataIdFromObject: function (o) { o.id ? o.__typename + "-" + o.id : o.__typename + "-" + o.cursor; },
-        }).restore(initialState || {})
+        cache: cache
     });
 };
 exports.initApollo = function (initialState) {

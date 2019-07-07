@@ -12,7 +12,9 @@ import { SubscriptionClient } from 'subscriptions-transport-ws'
 import { split } from 'apollo-link'
 import { getMainDefinition } from 'apollo-utilities'
 import { onError } from "apollo-link-error"
-import { ApolloLink } from 'apollo-link';
+import { ApolloLink } from 'apollo-link'
+import { persistCache } from 'apollo-cache-persist'
+
 // import { API_BASE_URL,DEBUG } from './options'
 let apolloClient = null
 
@@ -23,8 +25,11 @@ if (!process.browser) {
     global.fetch = fetch
 }
 
+var DEBUG=!!process.env.DEBUG
+var USE_SUBSCRIPTIONS=process.env.USE_SUBSCRIPTIONS
+//remove quotation marks added by zeit build
+var API_BASE_URL=process.env.API_BASE_URL.replace(/\"/g,'')
 
-const { API_BASE_URL,DEBUG,USE_SUBSCRIPTIONS } = process.env
 
 const extractHostname=(url)=> {
     var hostname;
@@ -160,7 +165,7 @@ const create = (initialState) =>{
 
     // const links = [authLink.concat(httpLink)]
 
-    if (wsLink)
+    if (wsLink){
         link = split(
             ({ query }) => {
                 const { kind, operation } = getMainDefinition(query)
@@ -169,6 +174,36 @@ const create = (initialState) =>{
             wsLink,
             httpLinkWithAuth
         )
+    }
+
+
+
+    const restoreState= initialState || {}
+
+    const cache=new InMemoryCache({
+        //@ts-ignore
+        dataIdFromObject: o => {o.id ? `${o.__typename}-${o.id}`: `${o.__typename}-${o.cursor}`},
+    }).restore(restoreState)
+
+
+
+    try {
+        //@ts-ignore
+        if (process.browser&&typeof window!=="window"){
+
+
+            // See above for additional options, including other storage providers.
+            persistCache({
+                cache,
+                //@ts-ignore
+                storage: window.localStorage,
+            })
+        }
+    } catch (error) {
+        console.error('Error restoring Apollo cache', error);
+    }
+
+        
 
 
     // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
@@ -180,11 +215,7 @@ const create = (initialState) =>{
         //@ts-ignore
         ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
         link,
-        cache: new InMemoryCache({
-
-            //@ts-ignore
-            dataIdFromObject: o => {o.id ? `${o.__typename}-${o.id}`: `${o.__typename}-${o.cursor}`},
-        }).restore(initialState || {})
+        cache
     })
 }
 
