@@ -2,7 +2,9 @@
 import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import * as fetch from 'isomorphic-unfetch'
+import fetch from 'isomorphic-unfetch'
+
+
 // import * as urljoin from 'url-join'
 import { setContext } from 'apollo-link-context'
 import { getAccessToken } from '@etidbury/auth0'
@@ -18,12 +20,6 @@ import { persistCache } from 'apollo-cache-persist'
 // import { API_BASE_URL,DEBUG } from './options'
 let apolloClient = null
 
-// Polyfill fetch() on the server (used by apollo-client)
-//@ts-ignore
-if (!process.browser) {
-    //@ts-ignore
-    global.fetch = fetch
-}
 
 var DEBUG=!!process.env.DEBUG
 var USE_SUBSCRIPTIONS=process.env.USE_SUBSCRIPTIONS
@@ -52,6 +48,8 @@ const extractHostname=(url)=> {
 
 const create = (initialState) =>{
     
+    const isBrowser = typeof window !== 'undefined'
+
     // console.log('env',process.env)
     
     // const GRAPHQL_ENDPOINT = 'ws://localhost:3000/graphql';
@@ -63,7 +61,7 @@ const create = (initialState) =>{
     }
     
     //@ts-ignore
-    if (process.browser&&!!USE_SUBSCRIPTIONS) {
+    if (isBrowser&&!!USE_SUBSCRIPTIONS) {
         
        
         // todo: set logic to replace http with ws and https with wss. Currently replaces either with wss
@@ -125,6 +123,7 @@ const create = (initialState) =>{
     const httpLink = new HttpLink({
         uri: API_BASE_URL // Server URL (must be absolute)
         , credentials: 'same-origin' // Additional fetch() options like `credentials` or `headers`
+        ,  fetch: !isBrowser && fetch
     })
     
     const authLink = setContext((_, { headers }) => {
@@ -189,7 +188,7 @@ const create = (initialState) =>{
 
     try {
         //@ts-ignore
-        if (process.browser&&typeof window!=="window"){
+        if (isBrowser){
 
 
             // See above for additional options, including other storage providers.
@@ -203,17 +202,16 @@ const create = (initialState) =>{
         console.error('Error restoring Apollo cache', error);
     }
 
-        
-
+    
 
     // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
     return new ApolloClient({
         //@ts-ignore
-        storage: process.browser && window.localStorage,
+        storage: isBrowser&& window.localStorage,
         //@ts-ignore
-        connectToDevTools: process.browser,
+        connectToDevTools: isBrowser,
         //@ts-ignore
-        ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
+        ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
         link,
         cache
     })
@@ -224,7 +222,7 @@ export const initApollo:any= (initialState?):any => {
     // Make sure to create a new client for every server-side request so that data
     // isn't shared between connections (which would be bad)
     //@ts-ignore
-    if (!process.browser) {
+    if (typeof window === 'undefined') {
         return create(initialState)
     }
 
