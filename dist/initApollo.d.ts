@@ -1,2 +1,1 @@
-export declare const initApollo: any;
-export default initApollo;
+export default function initApollo(initialState: any): any;

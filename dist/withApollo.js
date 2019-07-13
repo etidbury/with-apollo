@@ -60,61 +60,43 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
-var PropTypes = require("prop-types");
-var react_apollo_1 = require("react-apollo");
-var head_1 = require("next/head");
 var initApollo_1 = require("./initApollo");
-var auth0_1 = require("@etidbury/auth0");
-// Gets the display name of a JSX component for dev tools
-function getComponentDisplayName(Component) {
-    return Component.displayName || Component.name || 'Unknown';
-}
-exports.withApollo = function (ComposedComponent) {
+var head_1 = require("next/head");
+var server_1 = require("react-dom/server");
+var react_apollo_hooks_1 = require("react-apollo-hooks");
+exports.default = (function (App) {
     var _a;
     return _a = /** @class */ (function (_super) {
-            __extends(WithData, _super);
-            function WithData(props) {
+            __extends(Apollo, _super);
+            function Apollo(props) {
                 var _this = _super.call(this, props) || this;
-                //@ts-ignore
-                _this.apollo = initApollo_1.initApollo(_this.props.serverState.apollo.data);
+                _this.apolloClient = initApollo_1.default(props.apolloState);
                 return _this;
             }
-            WithData.getInitialProps = function (ctx) {
+            Apollo.getInitialProps = function (ctx) {
                 return __awaiter(this, void 0, void 0, function () {
-                    var serverState, composedInitialProps, apollo, error_1;
+                    var Component, router, isBrowser, appProps, apollo, error_1, apolloState;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
-                                serverState = {
-                                    apollo: {
-                                        data: {}
-                                    }
-                                };
-                                composedInitialProps = {};
-                                if (!ComposedComponent.getInitialProps) return [3 /*break*/, 2];
-                                return [4 /*yield*/, ComposedComponent.getInitialProps(ctx)];
+                                Component = ctx.Component, router = ctx.router;
+                                isBrowser = typeof window !== 'undefined';
+                                appProps = {};
+                                if (!App.getInitialProps) return [3 /*break*/, 2];
+                                return [4 /*yield*/, App.getInitialProps(ctx)];
                             case 1:
-                                composedInitialProps = _a.sent();
+                                appProps = _a.sent();
                                 _a.label = 2;
                             case 2:
-                                if (!!process.browser) return [3 /*break*/, 7];
-                                apollo = initApollo_1.initApollo();
-                                if (!apollo) {
-                                    throw new Error('Failed to instantiate Apollo (initApollo)');
-                                }
+                                apollo = initApollo_1.default({});
+                                if (!!isBrowser) return [3 /*break*/, 7];
                                 _a.label = 3;
                             case 3:
                                 _a.trys.push([3, 5, , 6]);
                                 // Run all GraphQL queries
-                                return [4 /*yield*/, react_apollo_1.getDataFromTree(
-                                    //@ts-ignore
-                                    React.createElement(react_apollo_1.ApolloProvider, { client: apollo },
-                                        React.createElement(ComposedComponent, __assign({}, composedInitialProps))), {
-                                        router: {
-                                            asPath: ctx.asPath,
-                                            pathname: ctx.pathname,
-                                            query: ctx.query
-                                        }
+                                return [4 /*yield*/, react_apollo_hooks_1.getMarkupFromTree({
+                                        renderFunction: server_1.renderToString,
+                                        tree: (React.createElement(App, __assign({}, appProps, { Component: Component, router: router, apolloClient: apollo })))
                                     })];
                             case 4:
                                 // Run all GraphQL queries
@@ -122,37 +104,29 @@ exports.withApollo = function (ComposedComponent) {
                                 return [3 /*break*/, 6];
                             case 5:
                                 error_1 = _a.sent();
+                                // Prevent Apollo Client GraphQL errors from crashing SSR.
+                                // Handle them in components via the data.error prop:
+                                // https://www.apollographql.com/docs/react/api/react-apollo.html#graphql-query-data-error
+                                console.error("Error while running `getDataFromTree`", error_1);
                                 return [3 /*break*/, 6];
                             case 6:
                                 // getDataFromTree does not call componentWillUnmount
                                 // head side effect therefore need to be cleared manually
                                 head_1.default.rewind();
-                                // Extract query data from the Apollo store
-                                serverState = {
-                                    apollo: {
-                                        // @ts-ignore
-                                        data: apollo.cache.extract()
-                                    }
-                                };
                                 _a.label = 7;
-                            case 7: return [2 /*return*/, __assign({}, composedInitialProps, { isAuthenticated: auth0_1.checkIsAuthenticated(ctx), serverState: serverState })];
+                            case 7:
+                                apolloState = apollo.cache.extract();
+                                return [2 /*return*/, __assign({}, appProps, { apolloState: apolloState })];
                         }
                     });
                 });
             };
-            WithData.prototype.render = function () {
-                return (
-                //@ts-ignore
-                React.createElement(react_apollo_1.ApolloProvider, { client: this.apollo },
-                    React.createElement(ComposedComponent, __assign({}, this.props))));
+            Apollo.prototype.render = function () {
+                return React.createElement(App, __assign({}, this.props, { apolloClient: this.apolloClient }));
             };
-            return WithData;
+            return Apollo;
         }(React.Component)),
-        _a.displayName = "WithData(" + getComponentDisplayName(ComposedComponent) + ")",
-        _a.propTypes = {
-            serverState: PropTypes.object.isRequired,
-            isAuthenticated: PropTypes.bool
-        },
+        _a.displayName = "withApollo(App)",
         _a;
-};
+});
 //# sourceMappingURL=withApollo.js.map
