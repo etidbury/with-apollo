@@ -88,8 +88,14 @@ let link = httpLinkWithAuth
     const restoreState= initialState || {}
 
     const cache=new InMemoryCache({
-        //@ts-ignore
-        dataIdFromObject: o => {o.id ? `${o.__typename}-${o.id}`: `${o.__typename}-${o.cursor}`},
+        dataIdFromObject: o => {
+          if (!o){
+            console.debug('dataIdFromObject(): no object found',o)
+            return undefined
+          }
+          //@ts-ignore 
+          return o.id ? `${o.__typename}-${o.id}`: `${o.__typename}-${o.cursor}`
+        },
     }).restore(restoreState)
 
 
