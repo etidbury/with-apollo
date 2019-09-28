@@ -73,22 +73,22 @@ function create(initialState) {
     //         httpLinkWithAuth
     //     )
     // }
-    var restoreState = initialState || {};
-    var cache = new apollo_boost_1.InMemoryCache({
-        dataIdFromObject: function (o) {
-            if (!o) {
-                console.debug('dataIdFromObject(): no object found', o);
-                return undefined;
-            }
-            //@ts-ignore 
-            return o.id ? o.__typename + "-" + o.id : o.__typename + "-" + o.cursor;
-        },
-    }).restore(restoreState);
+    //const restoreState= initialState || {}
+    // const cache=new InMemoryCache({
+    //     dataIdFromObject: o => {
+    //       if (!o){
+    //         console.debug('dataIdFromObject(): no object found',o)
+    //         return undefined
+    //       }
+    //       //@ts-ignore 
+    //       return o.id ? `${o.__typename}-${o.id}`: `${o.__typename}-${o.cursor}`
+    //     },
+    // }).restore(restoreState)
     return new apollo_boost_1.ApolloClient({
         connectToDevTools: isBrowser,
         ssrMode: !isBrowser,
         link: link,
-        cache: cache,
+        cache: null,
         resolvers: {},
     });
 }
