@@ -20,6 +20,7 @@ let apolloClient = null
 
 //var DEBUG=!!process.env.DEBUG
 var API_BASE_URL=process.env.API_BASE_URL.replace(/\"/g,'')
+var USE_APOLLO_CACHE=process.env.USE_APOLLO_CACHE.replace(/\"/g,'')
 
 
 function create (initialState) {
@@ -85,25 +86,25 @@ let link = httpLinkWithAuth
 
 
 
-    //const restoreState= initialState || {}
+    const restoreState= initialState || {}
 
-    // const cache=new InMemoryCache({
-    //     dataIdFromObject: o => {
-    //       if (!o){
-    //         console.debug('dataIdFromObject(): no object found',o)
-    //         return undefined
-    //       }
-    //       //@ts-ignore 
-    //       return o.id ? `${o.__typename}-${o.id}`: `${o.__typename}-${o.cursor}`
-    //     },
-    // }).restore(restoreState)
+    const cache=new InMemoryCache({
+        dataIdFromObject: o => {
+          if (!o){
+            console.debug('dataIdFromObject(): no object found',o)
+            return undefined
+          }
+          //@ts-ignore 
+          return o.id ? `${o.__typename}-${o.id}`: `${o.__typename}-${o.cursor}`
+        },
+    }).restore(restoreState)
 
 
   return new ApolloClient({
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link,
-    cache:null,
+    cache: !!USE_APOLLO_CACHE ? cache:null,
     resolvers: {},
   })
 }
