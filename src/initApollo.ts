@@ -20,7 +20,6 @@ let apolloClient = null
 
 //var DEBUG=!!process.env.DEBUG
 var API_BASE_URL=process.env.API_BASE_URL.replace(/\"/g,'')
-var USE_APOLLO_CACHE=process.env.USE_APOLLO_CACHE.replace(/\"/g,'')
 
 
 function create (initialState) {
@@ -104,7 +103,7 @@ let link = httpLinkWithAuth
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link,
-    cache: !!USE_APOLLO_CACHE ? cache:null,
+    cache,
     resolvers: {},
   })
 }
